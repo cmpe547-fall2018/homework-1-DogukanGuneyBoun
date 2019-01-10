@@ -1,0 +1,112 @@
+print("\nPROBLEM 26")
+print("\nPART 1)")
+import numpy as np
+import math
+p = np.array([[0.3,0.3,0],
+     [0.1,0.2,0.1]])
+X=[1,2]
+Y=[-1,0,5]
+
+# PART 1)
+
+expected_x=0
+expected_y=0
+prob_X=np.zeros(len(X))
+prob_Y=np.zeros(len(Y))
+for i in range (0,len(X)) :
+    prob_X[i]+=np.sum(p[i,:])
+for i in range (0,len(Y)) :
+    prob_Y[i]+=np.sum(p[:,i])
+for i in range (0,len(X)) :
+    expected_x+=X[i]*prob_X[i]
+    expected_x=round(expected_x,4)
+for i in range (0,len(Y)) :
+    expected_y+=Y[i]*prob_Y[i]
+expected_y=round(expected_y, 5)
+
+print("The Expected Value of x is : {}".format(expected_x))
+print("The Expected Value of y is : {}".format(expected_y))
+
+def cond_expectancy(prob_table,given_value) :
+    sum=0
+    if given_value in Y:
+        indx=Y.index(given_value)
+        for i in range(0,len(X)) :
+            sum+=(p[i,indx]/prob_Y[indx])*X[i]
+
+    elif given_value in X :
+        indx = X.index(given_value)
+        for i in range(0, len(Y)):
+            sum += (p[indx, i] / prob_X[indx]) * Y[i]
+    return sum
+print("\n")
+exp_x_given_y=np.zeros(len(Y))
+exp_y_given_x=np.zeros(len(X))
+for i in range (0,len(Y)) :
+    exp_x_given_y[i]=cond_expectancy(p,Y[i])
+    print("The Expected Value of x given y={} is {}: ".format(Y[i],exp_x_given_y[i]))
+print("\n")
+for i in range (0,len(X)) :
+    exp_y_given_x[i]=cond_expectancy(p,X[i])
+    print("The Expected Value of y given x={} is : {}".format(X[i],exp_y_given_x[i]))
+
+expected_xy=0
+for i in range (0,len(X)):
+    for j in range (0,len(Y)):
+        expected_xy+=p[i,j]*X[i]*Y[j]
+
+cov_x_and_y=expected_xy-(expected_x*expected_y)
+print("The Covariance of X and Y is : {} ".format(cov_x_and_y));
+# PART 2)
+print("\nPART 2)")
+joint_entropy=0
+for i in range (0,len(X)):
+    for j in range (0,len(Y)):
+        if (p[i,j] != 0):
+            joint_entropy-=p[i,j]*math.log(p[i,j],2)
+
+print("\nThe Joint Entropy is : {}".format(joint_entropy))
+
+#PART 3)
+print("\nPART 3)")
+
+marginal_entropy_x=0
+marginal_entropy_y=0
+for i in range(0,len(X)):
+    if (prob_X[i]!=0):
+        marginal_entropy_x-=prob_X[i]*math.log(prob_X[i],2)
+for i in range(0,len(Y)):
+    if (prob_Y[i]!=0):
+        marginal_entropy_y-=prob_Y[i]*math.log(prob_Y[i],2)
+print("\nThe Marginal Entropy of x is {}".format(marginal_entropy_x))
+print("The Marginal Entropy of y is {}".format(marginal_entropy_y))
+
+# PART 4)
+print("\nPART 4)")
+
+cond_entropy_x_given_y=0
+cond_entropy_y_given_x=0
+
+for i in range(0,len(X)):
+    for j in range(0,len(Y)):
+        if (p[i,j]!=0):
+            cond_entropy_x_given_y-=p[i,j]*math.log((p[i,j]/prob_Y[j]),2)
+for i in range(0,len(X)):
+    for j in range(0,len(Y)):
+        if (p[i,j]!=0):
+            cond_entropy_y_given_x-=p[i,j]*math.log((p[i,j]/prob_X[i]),2)
+print("\nConditional Entropy H[x|y] is : {}".format(cond_entropy_x_given_y))
+print("Conditional Entropy H[y|x] is : {}".format(cond_entropy_y_given_x))
+
+# PART 5)
+print("\nPART 5)")
+
+mutual_information=0
+for i in range(0,len(X)):
+    for j in range(0,len(Y)):
+        if (p[i,j]!=0):
+            mutual_information+=p[i,j]*math.log((p[i,j]/(prob_X[i]*prob_Y[j])),2)
+print("\n The Mutual Information is : {}".format(mutual_information))
+
+print("""\n WHEN THE PROGRAM RUNS FOR THE GIVEN PROBABILITY TABLE AT PART 6, THE RESULTS ARE CONSISTENT WÝTH THE DIAGRAM AT PART 7 !
+                                           SO IT WORKS PERFECT !!!""")
